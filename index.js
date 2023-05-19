@@ -105,6 +105,20 @@ async function run() {
       res.send(result);
 
     });
+ 
+    /* -------------------------------------------------------------------------- */
+    /*                                DELETE ROUTE                                */
+    /* -------------------------------------------------------------------------- */
+ 
+    app.delete('/toys/:id', async (req, res) =>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const result = await toyCollection.deleteOne(filter)
+
+      res.send(result);
+ 
+      console.log(result);
+    })
 
   } finally {
     // Ensures that the client will close when you finish/error
