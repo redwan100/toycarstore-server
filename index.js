@@ -42,12 +42,15 @@ async function run() {
   /* -------------------------------------------------------------------------- */
 
     /* ------------------------------ GET ALL TOYS ------------------------------ */
-    app.get("/allToys", async (req, res) => {
-      const result = await toyCollection.find().limit(20).toArray();
+  app.get("/allToys", async (req, res) => {
+    let query = {};
+    if (req.query?.email) {
+      query = { sellerEmail: req.query.email };
+    }
+    const result = await toyCollection.find(query).toArray();
 
-      res.send(result);
-    });
-
+    res.send(result);
+  });
 
     app.get('/toyDetails/:id', async (req, res) => {
       const id = req.params.id;
@@ -57,15 +60,39 @@ async function run() {
       res.send(result)
     })
 
-    /* -------------------------- GET SUBCATEGORY TOYS -------------------------- */
-    app.get('/subcategory/:text', async (req, res) => {
-      //  const result = await toyCollection.find().limit(3).toArray()
-      //  res.send(result);
-      const category = req.query.text
-      console.log(category);
-      const cursor = toyCollection
+
+   
+    app.get('/updateToy/:id', async(req, res) =>{
+      const id = req.params.id;
+      
+      const query = {_id: new ObjectId(id)};
+      const result = await toyCollection.findOne(query);
+
+      res.send(result);
     })
- 
+
+    /* -------------------------------------------------------------------------- */
+    /*                                UPDATE ROUTE                                */
+    /* -------------------------------------------------------------------------- */
+
+    app.patch('/updateToy/:id', async (req, res) => {
+      const updated = req.body
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const updateDoc = {$set:{
+        price: updated.price,
+        quantity:updated.quantity,
+        description:updated.description
+      }};
+
+      const result = await toyCollection.updateOne(filter, updateDoc)
+
+      res.send(result);
+
+      console.log(updateDoc);
+    })
+
+  
    /* -------------------------------------------------------------------------- */
    /*                                 POST ROUTE                                 */
    /* -------------------------------------------------------------------------- */
