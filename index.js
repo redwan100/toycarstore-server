@@ -44,12 +44,24 @@ async function run() {
     /* ------------------------------ GET ALL TOYS ------------------------------ */
   app.get("/allToys", async (req, res) => {
     let query = {};
-    if (req.query?.email) {
-      query = { sellerEmail: req.query.email };
+    if (req.query?.email ) {
+      query = { sellerEmail: req.query.email};
     }
     const result = await toyCollection.find(query).toArray();
 
     res.send(result);
+  });
+
+  app.get("/allToy/:text", async (req, res) => {
+   
+    const text =req.params.text;
+    const query = {toyName: text }
+
+    const result = await toyCollection.find(query).toArray();
+
+    res.send(result);
+
+    console.log(query, text, result);
   });
 
     app.get('/toyDetails/:id', async (req, res) => {
@@ -70,6 +82,18 @@ async function run() {
 
       res.send(result);
     })
+
+
+    app.get('/categoryItems/:category', async(req, res) => {
+      const category = req.params.category
+      const query = { categoryName: category };
+      const result = await toyCollection.find(query).limit(3).toArray();
+
+      res.send(result);
+ 
+      console.log(category, query);
+    })
+
 
     /* -------------------------------------------------------------------------- */
     /*                                UPDATE ROUTE                                */
@@ -110,7 +134,7 @@ async function run() {
     /*                                DELETE ROUTE                                */
     /* -------------------------------------------------------------------------- */
  
-    app.delete('/toys/:id', async (req, res) =>{
+    app.delete('/deleteToy/:id', async (req, res) =>{
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)}
       const result = await toyCollection.deleteOne(filter)
