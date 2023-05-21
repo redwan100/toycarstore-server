@@ -31,6 +31,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toyCollection = await client.db("toysStore").collection("toys");
+    const galleryCollection = await client.db("toysStore").collection("gallery");
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -40,14 +41,14 @@ async function run() {
   /* -------------------------------------------------------------------------- */
   /*                                  GET ROUTE                                 */
   /* -------------------------------------------------------------------------- */
-
+ 
     /* ------------------------------ GET ALL TOYS ------------------------------ */
   app.get("/allToys", async (req, res) => {
     let query = {};
     if (req.query?.email ) {
       query = { sellerEmail: req.query.email};
     }
-    const result = await toyCollection.find(query).toArray();
+    const result = await toyCollection.find(query).sort({price:1}).toArray();
 
     res.send(result);
   });
@@ -61,7 +62,6 @@ async function run() {
 
     res.send(result);
 
-    console.log(query, text, result);
   });
 
     app.get('/toyDetails/:id', async (req, res) => {
@@ -84,17 +84,33 @@ async function run() {
     })
 
 
-    app.get('/categoryItems/:category', async(req, res) => {
-      const category = req.params.category
-      const query = { categoryName: category };
-      const result = await toyCollection.find(query).limit(3).toArray();
+    app.get('/categoryItems/:subcategory', async(req, res) => {
+      const subcategory = req.params.subcategory
+      const query = { subcategoryName: subcategory };
+      const result = await toyCollection.find(query).toArray();
 
       res.send(result);
  
-      console.log(category, query);
+      console.log(subcategory, query);
     })
 
 
+    app.get('/gallery/:text', async(req,res) => {
+      const text = req.params.text;
+      const query = {group: text}
+      
+      const result = await galleryCollection.find(query).toArray()
+
+      res.send(result)
+      console.log(result, text); 
+    })
+
+    app.get('/gallerybtns', async(req,res) => {
+      const result = await galleryCollection.find().project({group: 1, _id:0}).toArray()
+
+      res.send(result)
+    })
+ 
     /* -------------------------------------------------------------------------- */
     /*                                UPDATE ROUTE                                */
     /* -------------------------------------------------------------------------- */
