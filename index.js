@@ -91,7 +91,6 @@ async function run() {
 
       res.send(result);
  
-      console.log(subcategory, query);
     })
 
 
@@ -102,7 +101,6 @@ async function run() {
       const result = await galleryCollection.find(query).toArray()
 
       res.send(result)
-      console.log(result, text); 
     })
 
     app.get('/gallerybtns', async(req,res) => {
@@ -173,7 +171,7 @@ run().catch(console.dir);
 /*                                   ROUTES                                   */
 /* -------------------------------------------------------------------------- */
 app.get('/', (req,res) => {
-    res.send('SERVER IS RUNNING')
+    res.send('CAR TOYS SERVER IS RUNNING')
 })
 
 
